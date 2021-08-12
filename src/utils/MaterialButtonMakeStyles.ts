@@ -1,4 +1,6 @@
-import { hexColorToRGB, asureColor, colourNameToHex } from "@unlimited-react-components/kernel";
+import { DynamicSheet, DynamicSheetRule } from "@dynamicss/dynamicss";
+import { hexColorToRGB, asureColor, colourNameToHex, darkerColor } from "@unlimited-react-components/kernel";
+import { MaterialButtonProps } from "../MaterialButton/MaterialButtonProps";
 /**
  * In order to avoid overwriting the classnames
  * and to be able to have different styled buttons in the document
@@ -55,7 +57,7 @@ export function createRipple<
             asureColor(colourNameToHex(color)),
             0.4
         );
-      
+
     } else {
 
         circle.style.backgroundColor = hexColorToRGB("#ffffff", 0.4);
@@ -65,4 +67,82 @@ export function createRipple<
         ripple.remove();
     }
     buttonAnchorDiv.appendChild(circle);
+}
+
+export const makeDynamicStyle = (
+    variant: MaterialButtonProps["variant"],
+    disabled: MaterialButtonProps["disabled"],
+    color: MaterialButtonProps["color"],
+    textColor: MaterialButtonProps["textColor"],
+    nextClassName: number
+): DynamicSheet => {
+    let styleSheet: DynamicSheet = {
+        id: "material-button-styles" + "-" + nextClassName,
+        sheetRules: [{
+            className: `material-button.${variant}-${nextClassName}`,
+            rules: {},
+        },
+        {
+            className: `material-button-root.${variant}-${nextClassName}`,
+            rules: {},
+        },],
+    };
+    let sheetRules: DynamicSheetRule[] = styleSheet.sheetRules as DynamicSheetRule[];
+
+    if (!disabled) {
+
+        switch (variant) {
+            case "contained":
+                sheetRules[0].rules = {
+                    color: asureColor(colourNameToHex(textColor)),
+                    backgroundColor: asureColor(colourNameToHex(color)),
+                };
+                sheetRules[1].rules = {
+                    ":hover": {
+                        backgroundColor: darkerColor(
+                            hexColorToRGB(asureColor(colourNameToHex(color)), 1)
+                        ),
+                    },
+                };
+                break;
+            case "outlined":
+                sheetRules[0].rules = {
+                    border: `1px solid ${hexColorToRGB(
+                        asureColor(colourNameToHex(color)),
+                        0.5
+                    )}`,
+                    color: asureColor(colourNameToHex(color)),
+                    backgroundColor: "transparent",
+                };
+                sheetRules[1].rules = {
+                    ":hover": {
+                        border: `1px solid ${hexColorToRGB(
+                            asureColor(colourNameToHex(color)),
+                            1
+                        )}`,
+                        backgroundColor: hexColorToRGB(
+                            asureColor(colourNameToHex(color)),
+                            0.085
+                        ),
+                    },
+                };
+                break;
+            case "text":
+                sheetRules[0].rules = {
+                    color: asureColor(colourNameToHex(color)),
+                    backgroundColor: "transparent",
+                };
+                sheetRules[1].rules = {
+                    ":hover": {
+                        backgroundColor: hexColorToRGB(
+                            asureColor(colourNameToHex(color)),
+                            0.085
+                        ),
+                    },
+                };
+                break;
+        }
+    }
+    styleSheet.sheetRules = sheetRules;
+    return styleSheet;
 }

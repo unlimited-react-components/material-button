@@ -28,5 +28,5 @@ export default {
     typescript(),
     //terser(),
   ],
-  external: ["@dynamicss/dynamicss", "@unlimited-react-components/kernel"],
+  //external: ["@dynamicss/dynamicss", "@unlimited-react-components/kernel"],
 };
