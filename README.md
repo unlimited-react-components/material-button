@@ -10,7 +10,7 @@
 [![dependencies Status](https://status.david-dm.org/gh/unlimited-react-components/material-button.svg)](https://david-dm.org/unlimited-react-components/material-button)
 [![Build Status](https://www.travis-ci.com/unlimited-react-components/material-button.svg?branch=master)](https://www.travis-ci.com/unlimited-react-components/material-button)
 [![install size](https://packagephobia.com/badge?p=@unlimited-react-components/material-button)](https://packagephobia.com/result?p=@unlimited-react-components/material-button)
-[![Coverage Status](https://coveralls.io/repos/github/Junlimited-react-components/material-button/badge.svg?branch=master&t=NYfAAW)](https://coveralls.io/github/unlimited-react-components/material-button?branch=master)
+[![Coverage Status](https://coveralls.io/repos/github/unlimited-react-components/material-button/badge.svg?branch=master)](https://coveralls.io/github/unlimited-react-components/material-button?branch=master)
 [![Total alerts](https://img.shields.io/lgtm/alerts/g/unlimited-react-components/material-button.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/unlimited-react-components/material-button/alerts/)
 [![Language grade: JavaScript](https://img.shields.io/lgtm/grade/javascript/g/unlimited-react-components/material-button.svg?logo=lgtm&logoWidth=18)](https://lgtm.com/projects/g/unlimited-react-components/material-button/context:javascript)
 [![Known Vulnerabilities](https://snyk.io/test/github/unlimited-react-components/material-button/badge.svg)](https://snyk.io/test/github/unlimited-react-components/material-button)
