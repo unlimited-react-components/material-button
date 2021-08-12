@@ -1,26 +1,20 @@
 import React, { useRef, useState, useEffect } from "react";
-
+import "./MaterialButton.scss";
 import {
   createRipple,
   getNextClassName,
+  makeDynamicStyle,
 } from "../utils/MaterialButtonMakeStyles";
-import {
-  mergeProps,
-  asureColor,
-  hexColorToRGB,
-  colourNameToHex,
-  darkerColor,
-} from "@unlimited-react-components/kernel";
 import {
   MaterialButtonDefaultProps,
   MaterialButtonProps,
 } from "./MaterialButtonProps";
+import { mergeProps } from "@unlimited-react-components/kernel";
 import {
   DynamiCSS,
   DynamicSheet,
   DynamicSheetRule,
 } from "@dynamicss/dynamicss";
-import "./MaterialButton.scss";
 
 const MaterialButton: React.FC<MaterialButtonProps> = (
   props: MaterialButtonProps,
@@ -38,147 +32,89 @@ const MaterialButton: React.FC<MaterialButtonProps> = (
     text,
   } = mergeProps(props, MaterialButtonDefaultProps);
   //states
-  const [idStyles, setIdStyles] = useState("");
-  const [styleInjected, setStyleInjected] = useState(false);
-  const [classNameCreated, setClassNameCreated] = useState("");
+  const [idStyles, setIdStyles] = useState<string>("");
+  const [styleInjected, setStyleInjected] = useState<boolean>(false);
+  const [nextClassName, setNextClassName] = useState<number>(0);
+  const [classNameCreated, setClassNameCreated] = useState<string>("");
 
   //effects
+  useEffect(() => {
+    return () => removeStyle();
+  }, [idStyles]);
+
   /**
    * Inserts the style for material button specific style
    * @param variant
    * @param disabled
    * @param color
    * @param textColor
-   * @param class_name
    * @param text
    */
-  const handleInserStyle = (
+  const handleInserStyle = async (
     variant: MaterialButtonProps["variant"],
     disabled: MaterialButtonProps["disabled"],
     color: MaterialButtonProps["color"],
     textColor: MaterialButtonProps["textColor"],
-    class_name: MaterialButtonProps["className"],
+
     text: MaterialButtonProps["text"],
   ) => {
-    //whether use the clasname number generator or not.
-    //only use classname generator when there is no theme
-   // const isThemeColor: boolean = color === "primary" || color === "secondary";
-    let classname = `material-button-root material-button `;
-    let styleSheet: DynamicSheet = {
-      id: "material-button-styles",
-      sheetRules: [],
-    };
-    let nextClassName: number = -1;
-    let sheetRules: DynamicSheetRule[] = [];
-    //if (!isThemeColor) {
-      //unique ids, different buttons
-      nextClassName = getNextClassName();
-      styleSheet.id = styleSheet.id + "-" + nextClassName;
-      sheetRules = [
-        ...[
-          {
-            className: `material-button.${variant}-${nextClassName}`,
-            rules: {},
-          },
-          {
-            className: `material-button-root.${variant}-${nextClassName}`,
-            rules: {},
-          },
-        ],
-      ];
-    //} 
-    
-   /*  else {
-      // non unique ids
-      styleSheet.id = "themed-" + styleSheet.id;
-      sheetRules = [
-        ...[
-          { className: `material-button.${variant}`, rules: {} },
-          {
-            className: `material-button-root.${variant}`,
-            rules: {},
-          },
-        ],
-      ];
-    } */
+    let class_name: string = className || "";
 
-    if (!disabled) {
-      //if (isThemeColor) {
-      //  classname += `${variant}`;
-     // } else {
-        classname += `${variant} ${variant}-${nextClassName}`;
-     // }
+    let styleSheet: DynamicSheet;
+    let idStyle: string = "";
+    let nextClassNameVar: number;
+    if (nextClassName == 0 && !styleInjected) {
+      //new
+      nextClassNameVar = getNextClassName();
+      styleSheet = makeDynamicStyle(
+        variant,
+        disabled,
+        color,
+        textColor,
+        nextClassNameVar,
+      );
+      setNextClassName(nextClassNameVar);
+      idStyle = DynamiCSS.insertStyleSheet(styleSheet);
 
-      switch (variant) {
-        case "contained":
-          sheetRules[0].rules = {
-            color: asureColor(colourNameToHex(textColor)),
-            backgroundColor: asureColor(colourNameToHex(color)),
-          };
-          sheetRules[1].rules = {
-            ":hover": {
-              backgroundColor: darkerColor(
-                hexColorToRGB(asureColor(colourNameToHex(color)), 1),
-              ),
-            },
-          };
-          break;
-        case "outlined":
-          sheetRules[0].rules = {
-            border: `1px solid ${hexColorToRGB(
-              asureColor(colourNameToHex(color)),
-              0.5,
-            )}`,
-            color: asureColor(colourNameToHex(color)),
-            backgroundColor: "transparent",
-          };
-          sheetRules[1].rules = {
-            ":hover": {
-              border: `1px solid ${hexColorToRGB(
-                asureColor(colourNameToHex(color)),
-                1,
-              )}`,
-              backgroundColor: hexColorToRGB(
-                asureColor(colourNameToHex(color)),
-                0.085,
-              ),
-            },
-          };
-          break;
-        case "text":
-          sheetRules[0].rules = {
-            color: asureColor(colourNameToHex(color)),
-            backgroundColor: "transparent",
-          };
-          sheetRules[1].rules = {
-            ":hover": {
-              backgroundColor: hexColorToRGB(
-                asureColor(colourNameToHex(color)),
-                0.085,
-              ),
-            },
-          };
-          break;
-        default:
-          sheetRules[0].rules = {
-            color: asureColor(colourNameToHex(textColor)),
-            backgroundColor: asureColor(colourNameToHex(color)),
-          };
-          sheetRules[1].rules = {
-            ":hover": {
-              backgroundColor: darkerColor(
-                hexColorToRGB(asureColor(colourNameToHex(color)), 1),
-              ),
-            },
-          };
-          break;
+      makeClassName(variant, class_name, nextClassNameVar);
+      setIdStyles(idStyle);
+      if (idStyle !== "") {
+        setStyleInjected(true);
       }
+    } else {
+      //already a stylesheet associated
+      styleSheet = makeDynamicStyle(
+        variant,
+        disabled,
+        color,
+        textColor,
+        nextClassName,
+      );
+      idStyle = DynamiCSS.editStyleSheet(idStyles, styleSheet.sheetRules || []);
+      makeClassName(variant, class_name, nextClassName);
+    }
+
+    //className
+  };
+  /**
+   *
+   * @param variant
+   * @param class_name
+   */
+  const makeClassName = (
+    variant: MaterialButtonProps["variant"],
+    class_name: string,
+    nextClassNameVar: number,
+  ) => {
+    let classname = `material-button-root material-button `;
+    if (!disabled) {
+      classname += `${variant} ${variant}-${nextClassNameVar}`;
     } else {
       classname += `disabled`;
     }
     //classname to override styles in stylesheet
     if (class_name) {
-      classname += `${classname} ${class_name}`;
+      classname += ` ${classname} ${class_name}`;
     }
     //some text in className
     if (text) {
@@ -186,40 +122,25 @@ const MaterialButton: React.FC<MaterialButtonProps> = (
     }
 
     setClassNameCreated(classname);
-    //Insert thestylesheet
-
-    //sheetRules.className = classname;
-    styleSheet.sheetRules = sheetRules;
-    const id = DynamiCSS.insertStyleSheet(styleSheet);
-    setIdStyles(id);
-    if (id !== "") {
-      setStyleInjected(true);
-    }
   };
-  const removeStyle = (idStyles: string) => {
+  const removeStyle = () => {
     if (styleInjected) {
       DynamiCSS.removeStyleSheet(idStyles);
       setStyleInjected(false);
       setIdStyles("");
     }
   };
-  useEffect(() => {
-    //handleInserStyle(variant, disabled, color, textColor);
-    return () => removeStyle(idStyles);
-    // eslint-disable-next-line
-  }, [idStyles]);
 
   useEffect(() => {
-    removeStyle(idStyles);
-    handleInserStyle(variant, disabled, color, textColor, className, text);
-    // eslint-disable-next-line
-  }, [variant, disabled, color, textColor, className, text]);
+    handleInserStyle(variant, disabled, color, textColor, text);
+  }, [variant, disabled, color, textColor, text]);
+
   //references
   const btn_ref = useRef<HTMLButtonElement>(null);
   const span_ref = useRef<HTMLSpanElement>(null);
   /**
    *
-   * @param e event
+   * @param e
    */
   function handleClick<T extends HTMLAnchorElement | HTMLButtonElement>(
     e: React.MouseEvent<T, MouseEvent>,
