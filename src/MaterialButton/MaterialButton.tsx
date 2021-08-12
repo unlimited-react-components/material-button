@@ -13,7 +13,6 @@ import { mergeProps } from "@unlimited-react-components/kernel";
 import {
   DynamiCSS,
   DynamicSheet,
-  DynamicSheetRule,
 } from "@dynamicss/dynamicss";
 
 const MaterialButton: React.FC<MaterialButtonProps> = (
@@ -90,7 +89,7 @@ const MaterialButton: React.FC<MaterialButtonProps> = (
         textColor,
         nextClassName,
       );
-      idStyle = DynamiCSS.editStyleSheet(idStyles, styleSheet.sheetRules || []);
+      DynamiCSS.editStyleSheet(idStyles, styleSheet.sheetRules || []);
       makeClassName(variant, class_name, nextClassName);
     }
 

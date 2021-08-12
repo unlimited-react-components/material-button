@@ -1,6 +1,6 @@
 {
   "name": "@unlimited-react-components/material-button",
-  "version": "1.2.2",
+  "version": "1.2.4",
   "description": "Independant Material Button from Material Design built from 0",
   "main": "./build/index.js",
   "module": "./build/index.es.js",
@@ -23,7 +23,7 @@
   "homepage": "https://github.com/unlimited-react-components/material-button#readme",
   "dependencies": {
     "@dynamicss/dynamicss": "^2.0.3",
-    "@unlimited-react-components/kernel": "^1.0.1"
+    "@unlimited-react-components/kernel": "^1.0.2"
   },
   "peerDependencies": {
     "react": "^17.0.2",

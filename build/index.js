@@ -799,7 +799,7 @@ var MaterialButton = function (props) {
             else {
                 //already a stylesheet associated
                 styleSheet = makeDynamicStyle(variant, disabled, color, textColor, nextClassName);
-                idStyle = DynamiCSS.editStyleSheet(idStyles, styleSheet.sheetRules || []);
+                DynamiCSS.editStyleSheet(idStyles, styleSheet.sheetRules || []);
                 makeClassName(variant, class_name, nextClassName);
             }
             return [2 /*return*/];
